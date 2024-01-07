@@ -40,10 +40,17 @@ const UserController = {
       .catch(error => console.error(error));
 
     try {
+      const existingUser = await UserModel.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ detail: 'Email already exists' });
+      }
+
       const newUser = await UserModel.create({ email, password: hash });
-      const token = jwt.sign({ email: newUser.email, userId: newUser._id }, process.env.JWT_SECRET, {
-        expiresIn: '2h', // Set the token expiration time
-      });
+      const token = jwt.sign(
+        { email: newUser.email, userId: newUser._id },
+        process.env.JWT_SECRET,
+        { expiresIn: '2h' }
+      );
       res.status(201).json({ id: newUser._id, email: newUser.email, token });
     } catch (error) {
       console.error('Error creating user:', error);
