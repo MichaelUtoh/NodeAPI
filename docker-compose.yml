@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  database:
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=zen
+      - MONGO_INITDB_ROOT_PASSWORD=pass1234
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/database
+
+  web:
+    build: .
+    restart: always
+    ports:
+      - '9000:9000'
+    depends_on:
+      - database
+volumes:
+  mongo-data:
