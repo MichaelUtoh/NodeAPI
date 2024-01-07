@@ -1,5 +1,6 @@
 // controllers/userController.js
 const crypto = require('crypto');
+const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/accounts');
 const createHashedPassword = require('../middleware/hashPass');
@@ -41,6 +42,11 @@ const UserController = {
 
     try {
       const existingUser = await UserModel.findOne({ email });
+
+      if (!validator.isEmail(email)) {
+        return res.status(400).json({ error: 'Invalid email format' });
+      }
+
       if (existingUser) {
         return res.status(400).json({ detail: 'Email already exists' });
       }
