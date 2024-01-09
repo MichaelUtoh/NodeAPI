@@ -4,8 +4,8 @@ services:
     image: mongo:latest
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=zen
-      - MONGO_INITDB_ROOT_PASSWORD=pass1234
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
     ports:
       - 27017:27017
     volumes:

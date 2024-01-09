@@ -3,16 +3,16 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
-    firstName: { type: String },
-    lastName: { type: String },
-    username: { type: String },
-    phoneNumber: { type: String },
-    address1: { type: String },
-    address2: { type: String },
-    state: { type: String },
-    country: { type: String },
-    key: { type: String },
-    dateJoined: { type: Date, default: Date.now },
+    first_name: { type: String, default: '' },
+    last_name: { type: String, default: '' },
+    username: { type: String, default: '' },
+    phone_number: { type: String, default: '' },
+    address1: { type: String, default: '' },
+    address2: { type: String, default: '' },
+    state: { type: String, default: '' },
+    country: { type: String, default: '' },
+    key: { type: String, default: '' },
+    created_at: { type: Date, default: Date.now },
     password: { type: String, required: true }
   }
 );
