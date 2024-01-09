@@ -4,6 +4,7 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/accounts');
 const createHashedPassword = require('../middleware/hashPass');
+const authenticateUser = require('../middleware/authUser');
 
 const UserController = {
   getAllUsers: async (req, res) => {
@@ -64,25 +65,34 @@ const UserController = {
     }
   },
 
-  updateUser: async (req, res) => {
+  updateUser: [authenticateUser, async (req, res) => {
     const userId = req.params.id;
-    const { email, password } = req.body;
+    const { first_name, last_name, phone_number, address1, state, country, date_joined } = req.body;
 
     try {
       const updatedUser = await UserModel.findByIdAndUpdate(
         userId,
-        { email, password },
+        { first_name, last_name, phone_number, address1, state, country, date_joined },
         { new: true }
       );
       if (!updatedUser) {
         return res.status(404).json({ error: 'User not found' });
       }
-      res.status(200).json(updatedUser);
+      res.status(200).json({
+        email: updatedUser.email,
+        first_name: updatedUser.firstName,
+        last_name: updatedUser.lastName,
+        address1: updatedUser.address1,
+        address2: updatedUser.address2,
+        state: updatedUser.state,
+        country: updatedUser.country,
+        date_joined: updatedUser.dateJoined,
+      });
     } catch (error) {
       console.error('Error updating user:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
-  },
+  }],
 
   deleteUser: async (req, res) => {
     const userId = req.params.id;
