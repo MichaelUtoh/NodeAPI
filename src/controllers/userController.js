@@ -3,8 +3,8 @@ const crypto = require('crypto');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/accounts');
-const createHashedPassword = require('../middleware/hashPass');
 const authenticateUser = require('../middleware/authUser');
+const { createHashedPassword, validatePassword } = require('../middleware/hashPass');
 
 const UserController = {
   getAllUsers: [authenticateUser, async (req, res) => {
@@ -32,14 +32,49 @@ const UserController = {
     }
   },
 
-  createUser: async (req, res) => {
+  loginUser: async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+      const existingUser = await UserModel.findOne({ email });
+
+      if (!existingUser) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+      console.log(existingUser);
+
+      const isPasswordValid = await validatePassword(
+        password,
+        existingUser.password,
+        existingUser.salt,
+        existingUser.iterations,
+        existingUser.keylen,
+        existingUser.digest,
+      );
+
+      if (!isPasswordValid) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+
+      const token = jwt.sign(
+        { email: existingUser.email, userId: existingUser._id },
+        process.env.JWT_SECRET,
+        { expiresIn: '2h' }
+      );
+
+      res.status(200).json({ id: existingUser._id, email: existingUser.email, token });
+
+      res.status(200).json({ 'detail': 'success' })
+    } catch (error) {
+      console.error('Error logging in:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  registerUser: async (req, res) => {
     const { email, password } = req.body;
     const salt = crypto.randomBytes(16).toString('hex');
-    let hash;
-
-    await createHashedPassword(password, salt)
-      .then(hashedPassword => hash = hashedPassword)
-      .catch(error => console.error(error));
+    const hashPassInfo = await createHashedPassword(password, salt)
 
     try {
       const existingUser = await UserModel.findOne({ email });
@@ -52,12 +87,21 @@ const UserController = {
         return res.status(400).json({ detail: 'Email already exists' });
       }
 
-      const newUser = await UserModel.create({ email, password: hash });
+      const newUser = await UserModel.create({
+        email,
+        password: hashPassInfo.hashedPassword,
+        salt: hashPassInfo.salt,
+        iterations: hashPassInfo.iterations,
+        keylen: hashPassInfo.keylen,
+        digest: hashPassInfo.digest,
+      });
+
       const token = jwt.sign(
         { email: newUser.email, userId: newUser._id },
         process.env.JWT_SECRET,
         { expiresIn: '2h' }
       );
+
       res.status(201).json({ id: newUser._id, email: newUser.email, token });
     } catch (error) {
       console.error('Error creating user:', error);
