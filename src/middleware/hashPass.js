@@ -6,10 +6,21 @@ const createHashedPassword = (password, salt, iterations = 100000, keylen = 24, 
       if (err) {
         reject(err);
       } else {
-        resolve(derivedKey.toString('hex'));
+        const hashedPassword = (derivedKey.toString('hex'));
+        resolve({ hashedPassword, salt, iterations, keylen, digest });
       }
     });
   });
 };
 
-module.exports = createHashedPassword;
+const validatePassword = async (password, hashedPassword, salt, iterations, keylen, digest) => {
+  try {
+    const hashedInputPassword = await createHashedPassword(password, salt, iterations, keylen, digest);
+    return hashedInputPassword.hashedPassword === hashedPassword;
+  } catch (error) {
+    console.error('Error validating password:', error);
+    return false;
+  }
+};
+
+module.exports = { createHashedPassword, validatePassword };

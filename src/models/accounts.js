@@ -13,7 +13,11 @@ const userSchema = new mongoose.Schema(
     country: { type: String, default: '' },
     key: { type: String, default: '' },
     created_at: { type: Date, default: Date.now },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    salt: { type: String, required: true },
+    iterations: { type: Number, required: true },
+    keylen: { type: Number, required: true },
+    digest: { type: String, required: true },
   }
 );
 

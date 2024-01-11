@@ -11,7 +11,8 @@ connectDB();
 
 app.get('/accounts/users', UserController.getAllUsers);
 app.get('/accounts/users/:id', UserController.getUserById);
-app.post('/accounts/users/register', UserController.createUser);
+app.post('/accounts/users/login', UserController.loginUser);
+app.post('/accounts/users/register', UserController.registerUser);
 app.put('/accounts/users/update/:id', UserController.updateUser);
 app.delete('/accounts/users/delete/:id', UserController.deleteUser);
 

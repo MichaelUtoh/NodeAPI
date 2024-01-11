@@ -8,7 +8,6 @@ const authenticateUser = (req, res, next) => {
     }
 
     token = token.split(" ")[1]
-
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
             return res.status(401).json({ error: 'Unauthorized: Invalid token' });
