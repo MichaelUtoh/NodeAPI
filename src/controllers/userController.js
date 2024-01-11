@@ -9,7 +9,9 @@ const { createHashedPassword, validatePassword } = require('../middleware/hashPa
 const UserController = {
   getAllUsers: [authenticateUser, async (req, res) => {
     try {
-      const users = await UserModel.find().select('_id email first_name last_name address1 state country created_at');
+      const users = await UserModel.find({ archive: false }).select(
+        '_id email first_name last_name address1 state country created_at'
+      );
       res.status(200).json(users);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -132,6 +134,38 @@ const UserController = {
         country: updatedUser.country,
         date_joined: updatedUser.created_at,
       });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }],
+
+  updateUserStatus: [authenticateUser, async (req, res) => {
+    const userId = req.params.id;
+    const { status, archive } = req.body;
+
+    try {
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        userId,
+        { status, archive },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.status(200).json({
+        email: updatedUser.email,
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        address1: updatedUser.address1,
+        address2: updatedUser.address2,
+        state: updatedUser.state,
+        country: updatedUser.country,
+        date_joined: updatedUser.created_at,
+        status: updatedUser.status,
+        archive: updatedUser.archive,
+      })
     } catch (error) {
       console.error('Error updating user:', error);
       res.status(500).json({ error: 'Internal Server Error' });

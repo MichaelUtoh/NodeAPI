@@ -18,6 +18,8 @@ const userSchema = new mongoose.Schema(
     iterations: { type: Number, required: true },
     keylen: { type: Number, required: true },
     digest: { type: String, required: true },
+    archive: { type: Boolean, default: false },
+    status: { type: String, default: '' },
   }
 );
 
