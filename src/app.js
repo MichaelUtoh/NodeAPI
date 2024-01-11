@@ -14,7 +14,8 @@ app.get('/accounts/users/:id', UserController.getUserById);
 app.post('/accounts/users/login', UserController.loginUser);
 app.post('/accounts/users/register', UserController.registerUser);
 app.put('/accounts/users/update/:id', UserController.updateUser);
-app.delete('/accounts/users/delete/:id', UserController.deleteUser);
+app.put('/accounts/users/delete/:id', UserController.updateUserStatus);
+// app.delete('/accounts/users/delete/:id', UserController.deleteUser);
 
 const port = 9000;
 
