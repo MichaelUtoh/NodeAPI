@@ -20,6 +20,8 @@ const userSchema = new mongoose.Schema(
     digest: { type: String, required: true },
     archive: { type: Boolean, default: false },
     status: { type: String, default: '' },
+
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
   }
 );
 

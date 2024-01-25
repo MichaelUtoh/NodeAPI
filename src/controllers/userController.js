@@ -1,4 +1,3 @@
-// controllers/userController.js
 const crypto = require('crypto');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
@@ -35,7 +34,7 @@ const UserController = {
     const userId = req.params.id;
 
     try {
-      const user = await UserModel.findById(userId);
+      const user = await UserModel.findById(userId).select('_id email first_name last_name address1 state country posts created_at');
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
