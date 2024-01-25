@@ -3,8 +3,9 @@ const User = require('./accounts');
 
 const postSchema = new mongoose.Schema(
     {
-        content: { type: String, default: '', required: true },
+        content: { type: String, required: true },
         image_url: { type: String, default: '' },
+        path: { type: String, required: true },
         created_at: { type: Date, default: Date.now },
         updated_at: { type: Date, default: Date.now },
         created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -13,7 +14,6 @@ const postSchema = new mongoose.Schema(
 )
 postSchema.pre('save', async function () {
     try {
-        console.log(this.created_by);
         const user = await User.findByIdAndUpdate(
             this.created_by,
             { $push: { posts: this._id } },
