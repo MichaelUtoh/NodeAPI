@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const connectDB = require('./config/database')
 const UserController = require('./controllers/userController');
-const ProductController = require('./controllers/productController');
+const PostController = require('./controllers/postController');
 
 const app = express();
 app.use(express.json());
@@ -14,10 +14,10 @@ connectDB();
 
 // Import Routers
 const userRoutes = require('./routes/userRoutes');
-const productRoutes = require('./routes/productRoutes');
+const postRoutes = require('./routes/postRoutes');
 
 app.use('/accounts', userRoutes);
-app.use('/products', productRoutes);
+app.use('/posts', postRoutes);
 
 
 const port = 9000;
